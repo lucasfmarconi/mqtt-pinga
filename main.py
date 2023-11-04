@@ -1,25 +1,42 @@
 import paho.mqtt.client as pahoClient
-import time
 import uuid
+import configparser as config
 
 
 def on_connect(client, userData, flags, responseCode):
-    if responseCode == 0:
-        print("Connected!")
-        return
-    print("Bad connection Returned code: {0}", responseCode)
+    match responseCode:
+        case 0:
+            print("MQTT Client connected")
+        case 1:
+            print(
+                "The server does not support the MQTT protocol requested by the client"
+            )
+        case 2:
+            print(
+                "The client ID is the correct UTF-8 string, but is not allowed by the server"
+            )
+        case 3:
+            print(
+                "Network connection has been established, but MQTT service is unavailable"
+            )
+        case 4:
+            print("The data in the username or password is in the wrong format")
+        case 5:
+            print("Client connection is not authorized")
 
 
-brokerAddress = "172.21.139.119"
-mqttConnectionName = str.format("mqtt-pinga-{0}", uuid.uuid4())
+brokerAddress = ""
+mqttConnectionName = str.format("pinga-client-{0}", uuid.uuid4())
 mqttClient = pahoClient.Client(mqttConnectionName)
 mqttClient.on_connect = on_connect
 
 print("Connecting to the Broker {0}", brokerAddress)
-
-mqttClient.connect(brokerAddress)
+# mqttClient.tls_set()
+# mqttClient.tls_insecure_set(True)
+# mqttClient.username_pw_set("", "")
+mqttClient.connect(brokerAddress, port=1883)
 mqttClient.loop_start()
-mqttClient.publish("/house/main/main-light", "off")
-time.sleep(4)
+mqttClient.publish("house/main/main-light", "on")
 mqttClient.loop_stop()
+print("Disconnecting from the Broker {0}", brokerAddress)
 mqttClient.disconnect()
