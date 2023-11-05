@@ -5,7 +5,7 @@ import uuid
 import seqlog as logging
 
 logging.configure_from_file("./seq.yml")
-logger = logging.logging
+logger = logging.logging.getLogger("mqttConn")
 
 def on_log(client, userdata, level, buf):
     logger.debug(buf)
@@ -58,7 +58,7 @@ except:
 mqttClient.loop_start()
 
 while not mqttClient.is_connected():
-    logger.debug("Waiting for connection...")
+    logger.debug("Waiting for CONNACK...")
     time.sleep(1)
 
 

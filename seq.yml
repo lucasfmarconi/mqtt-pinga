@@ -11,6 +11,15 @@ root:
   - seq
   - console
 
+# You can also configure non-root loggers.
+loggers:
+  mqttConn:
+      propagate: False
+      level: NOTSET
+      handlers:
+      - seq
+      - console
+
 handlers:
 # Log to STDOUT
   console:
