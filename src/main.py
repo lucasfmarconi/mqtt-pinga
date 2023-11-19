@@ -1,4 +1,5 @@
 from cgi import test
+import logging
 from infrastructure.mqttclient import MqttPublisher
 from infrastructure.mqttclient import MqttSubscriber
 import seqlog as rootLogger
@@ -30,7 +31,15 @@ except Exception as ex:
 
 
 subscriber = MqttSubscriber.MqttSubscriber(logger)
+mqtt_client = MqttSubscriber.Client
+try:
+    mqtt_client = subscriber.subscribe_to_topic(
+        "house/main/main-light", onmessage_callback=onmessage_callback
+    )
+    while mqtt_client.is_connected:
+        pass
 
-subscriber.subscribe_to_topic(
-    "house/main/main-light", onmessage_callback=onmessage_callback
-)
+except KeyboardInterrupt:
+    logger.info("Application exiting")
+    subscriber.disconnect_from_broker()
+    sys.exit(0)

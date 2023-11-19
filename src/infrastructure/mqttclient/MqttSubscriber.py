@@ -1,4 +1,5 @@
 from math import e
+from multiprocessing.connection import Client
 from .MqttConnector import MqttConnector
 import paho.mqtt.client as pahoClient
 import seqlog as logging
@@ -29,7 +30,13 @@ class MqttSubscriber:
         )
         return mqtt_client
 
-    def subscribe_to_topic(self, topic, onmessage_callback):
+    def disconnect_from_broker(self):
+        self.connector.disconnect()
+        self.logger.debug(
+            "Subscriber is disconnecting from the broker %s host", self.broker_address
+        )
+
+    def subscribe_to_topic(self, topic, onmessage_callback) -> pahoClient.Client:
         mqtt_client = self.connect_to_broker()
         mqtt_client.loop_start()
         mqtt_client.on_message = onmessage_callback
@@ -39,3 +46,4 @@ class MqttSubscriber:
             time.sleep(1)
 
         mqtt_client.subscribe(topic)
+        return mqtt_client
