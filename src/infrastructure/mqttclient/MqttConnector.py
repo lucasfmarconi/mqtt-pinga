@@ -4,6 +4,8 @@ import seqlog as logging
 
 
 class MqttConnector:
+    broker_host: str
+
     def __init__(self, logger):
         if logger is None:
             logging.configure_from_file("./seq.yml")
@@ -55,6 +57,7 @@ class MqttConnector:
         self.logger.debug(
             "Client %s is connecting to the broker %s : %s", connectionName, host, port
         )
+        self.broker_host = connectionName
         self.mqttClient = pahoClient.Client(connectionName)
         self.mqttClient.connect(host, port)
         self.mqttClient.on_connect = self.on_connect
@@ -63,5 +66,5 @@ class MqttConnector:
         return self.mqttClient
 
     def disconnect(self):
-        self.logger.info("Disconnecting from the Broker %s", self.mqttClient)
+        self.logger.info("Disconnecting from the Broker '%s'", self.broker_host)
         self.mqttClient.disconnect()

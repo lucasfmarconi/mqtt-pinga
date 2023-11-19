@@ -16,6 +16,7 @@ loggers:
   mqttConn:
       propagate: False
       level: NOTSET
+      support_extra_properties: true
       handlers:
       - seq
       - console

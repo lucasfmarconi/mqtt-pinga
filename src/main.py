@@ -1,6 +1,17 @@
+from cgi import test
 from infrastructure.mqttclient import MqttPublisher
+from infrastructure.mqttclient import MqttSubscriber
 import seqlog as rootLogger
 import sys
+
+
+def onmessage_callback(client, userdata, message):
+    logger.info(
+        "Received from topic %s message paylod: %s",
+        message.topic,
+        message.payload.decode("utf-8"),
+    )
+
 
 rootLogger.configure_from_file("./seq.yml")
 logger = rootLogger.logging.getLogger()
@@ -17,4 +28,9 @@ try:
 except Exception as ex:
     logger.error(ex)
 
-sys.exit(0)
+
+subscriber = MqttSubscriber.MqttSubscriber(logger)
+
+subscriber.subscribe_to_topic(
+    "house/main/main-light", onmessage_callback=onmessage_callback
+)

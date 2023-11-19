@@ -2,11 +2,11 @@ from math import e
 from .MqttConnector import MqttConnector
 import paho.mqtt.client as pahoClient
 import seqlog as logging
-import time
 import yaml
+import time
 
 
-class MqttPublisher:
+class MqttSubscriber:
     def __init__(self, logger):
         if logger is None:
             logging.configure_from_file("./seq.yml")
@@ -29,18 +29,13 @@ class MqttPublisher:
         )
         return mqtt_client
 
-    def publish(self, payload: str) -> bool:
+    def subscribe_to_topic(self, topic, onmessage_callback):
         mqtt_client = self.connect_to_broker()
-
         mqtt_client.loop_start()
+        mqtt_client.on_message = onmessage_callback
 
         while not mqtt_client.is_connected():
             self.logger.debug("Waiting for CONNACK...")
             time.sleep(1)
 
-        mqtt_client.publish("house/main/main-light", payload, qos=0, retain=True)
-        self.logger.debug("Message published")
-        mqtt_client.loop_stop()
-
-        self.connector.disconnect()
-        return True
+        mqtt_client.subscribe(topic)
