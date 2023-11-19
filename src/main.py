@@ -1,30 +1,20 @@
-from infrastructure.mqttclient import MqttConnector
+from infrastructure.mqttclient import MqttPublisher
 import seqlog as rootLogger
 import sys
-import time
 
 rootLogger.configure_from_file("./seq.yml")
 logger = rootLogger.logging.getLogger()
 
-mqttConnection = MqttConnector(logger)
-
-brokerAddress = "localhost"
-
-logger.info("Connecting to the Broker %s", brokerAddress)
+mqttPublisher = MqttPublisher.MqttPublisher(logger)
 
 try:
-    mqttClient = mqttConnection.connect(brokerAddress, 1883)
-except:
-    logger.error("Unable to connect to the broker %s", brokerAddress)
-    sys.exit(0)
-mqttClient.loop_start()
+    result = mqttPublisher.publish("on")
+    if not result:
+        logger.warning(
+            "Unable to publish message. If its quited, reduce log level to see details."
+        )
 
-while not mqttClient.is_connected():
-    logger.debug("Waiting for CONNACK...")
-    time.sleep(1)
+except Exception as ex:
+    logger.error(ex)
 
-mqttClient.publish("house/main/main-light", "on")
-logger.debug("Message published")
-mqttClient.loop_stop()
-logger.info("Disconnecting from the Broker %s", brokerAddress)
-mqttClient.disconnect()
+sys.exit(0)

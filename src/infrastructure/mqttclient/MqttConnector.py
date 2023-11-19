@@ -52,9 +52,13 @@ class MqttConnector:
         port: int,
         connectionName=str.format("pinga-client-{0}", uuid.uuid4()),
     ):
-        mqttClient = pahoClient.Client(connectionName)
-        mqttClient.connect(host, port)
-        mqttClient.on_connect = self.on_connect
-        mqttClient.on_connect_fail = self.on_connect_fail
-        mqttClient.on_log = self.on_log
-        return mqttClient
+        self.mqttClient = pahoClient.Client(connectionName)
+        self.mqttClient.connect(host, port)
+        self.mqttClient.on_connect = self.on_connect
+        self.mqttClient.on_connect_fail = self.on_connect_fail
+        self.mqttClient.on_log = self.on_log
+        return self.mqttClient
+
+    def disconnect(self):
+        self.logger.info("Disconnecting from the Broker %s", self.mqttClient)
+        self.mqttClient.disconnect()
