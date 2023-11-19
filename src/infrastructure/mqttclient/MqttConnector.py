@@ -52,6 +52,9 @@ class MqttConnector:
         port: int,
         connectionName=str.format("pinga-client-{0}", uuid.uuid4()),
     ):
+        self.logger.debug(
+            "Client %s is connecting to the broker %s : %s", connectionName, host, port
+        )
         self.mqttClient = pahoClient.Client(connectionName)
         self.mqttClient.connect(host, port)
         self.mqttClient.on_connect = self.on_connect
