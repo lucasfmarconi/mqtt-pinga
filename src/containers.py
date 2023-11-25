@@ -12,3 +12,9 @@ class Container(containers.DeclarativeContainer):
     logger = providers.Singleton(Logger, seqlog.logging.getLogger())
 
     mqtt_connector = providers.Factory(MqttConnector.MqttConnector, logger)
+    mqtt_publisher = providers.Factory(
+        MqttPublisher.MqttPublisher, logger, mqtt_connector
+    )
+    mqtt_subscriber = providers.Factory(
+        MqttSubscriber.MqttSubscriber, logger, mqtt_connector
+    )

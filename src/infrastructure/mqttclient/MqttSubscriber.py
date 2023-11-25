@@ -1,20 +1,16 @@
+from logging import Logger
 from math import e
 from multiprocessing.connection import Client
 from .MqttConnector import MqttConnector
 import paho.mqtt.client as pahoClient
-import seqlog as logging
 import yaml
 import time
 
 
 class MqttSubscriber:
-    def __init__(self, logger):
-        if logger is None:
-            logging.configure_from_file("./seq.yml")
-            logger = logging.logging.getLogger("mqttConn")
-
+    def __init__(self, logger: Logger, connector: MqttConnector):
         self.logger = logger
-        self.connector = MqttConnector(logger=logger)
+        self.connector = connector
 
         with open("mqtt.yml", "r") as file:
             config = yaml.safe_load(file)
