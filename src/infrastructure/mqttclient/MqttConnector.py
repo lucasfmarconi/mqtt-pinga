@@ -1,3 +1,4 @@
+from logging import Logger
 import paho.mqtt.client as pahoClient
 import uuid
 import seqlog as logging
@@ -6,7 +7,7 @@ import seqlog as logging
 class MqttConnector:
     broker_host: str
 
-    def __init__(self, logger):
+    def __init__(self, logger: Logger):
         if logger is None:
             logging.configure_from_file("./seq.yml")
             self.logger = logging.logging.getLogger("mqttConn")
