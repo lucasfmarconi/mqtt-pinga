@@ -50,4 +50,4 @@ if __name__ == "__main__":
     container.init_resources()
     container.wire(modules=[__name__])
 
-    main(*sys.argv[1:])
+    main(*sys.argv[1:])  # type: ignore
