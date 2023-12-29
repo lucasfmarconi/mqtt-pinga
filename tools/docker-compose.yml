@@ -1,13 +1,11 @@
 version: '3'
 services:
   mosquitto:
-    image: eclipse-mosquitto
-    container_name: mosquitto
+    image: emqx:latest
+    container_name: emqx
     ports:
       - "1883:1883"
-    volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:rw
-      - mosquitto_data:/mosquitto/data
+      - "18083:18083"
     restart: unless-stopped
   
   seq:
