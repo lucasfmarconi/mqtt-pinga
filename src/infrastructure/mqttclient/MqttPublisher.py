@@ -8,9 +8,9 @@ import yaml
 
 
 class MqttPublisher:
-    def __init__(self, logger: Logger, connector: MqttConnector):
+    def __init__(self, logger: Logger, mqtt_connector: MqttConnector):
         self.logger = logger
-        self.connector = connector
+        self.mqtt_connector = mqtt_connector
 
         with open("mqtt.yml", "r") as file:
             config = yaml.safe_load(file)
@@ -20,7 +20,7 @@ class MqttPublisher:
         pass
 
     def connect_to_broker(self) -> pahoClient.Client:
-        mqtt_client = self.connector.connect(self.broker_address, self.broker_port)
+        mqtt_client = self.mqtt_connector.connect(self.broker_address, self.broker_port)
         self.logger.debug(
             "Starting mqtt broker connection to the %s host", self.broker_address
         )
@@ -39,5 +39,5 @@ class MqttPublisher:
         self.logger.debug("Message published")
         mqtt_client.loop_stop()
 
-        self.connector.disconnect()
+        self.mqtt_connector.disconnect()
         return True
